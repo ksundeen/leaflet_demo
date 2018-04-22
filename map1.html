@@ -9,6 +9,7 @@
 	<div id="map" style="width: 705px; height: 375px"></div>
 	<div id="controls" style="margin: 15px;">
 		Our Buttons Will Go Here
+        <button id="addButton">Show Coffee Shops</button>
 	</div>
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 	<script>
@@ -21,9 +22,76 @@
     	// Add tile layer for Open Street Map to map object
     	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(map);
         
-        console.log("Hello");
+        console.log("Loading coffee shops now...");
+
+        // set coffee shop dataset to variable coffeeShops
+        var coffeeShops = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Dunkin Donuts",
+                        "address": "1 Broadway #1, Cambridge, MA 02142",
+                                        "latitude": 42.362504,
+                        "longitude": -71.083372
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-71.083372, 42.362504]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Starbucks",
+                        "address": "6 Cambridge Center, Cambridge, MA 02142",
+                                        "latitude": 42.363884,
+                        "longitude": -71.087749
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-71.087749, 42.363884]
+                    }
+                }
+            ]
+        };
+        
+        // Basic function to add geojson data to map div
+//        L.geoJson(coffeeShops).addTo(map);
 
 
+        // Bind popups to data objects
+        var coffeeShopPoints = L.geoJson(coffeeShops, {
+                onEachFeature: function (feature, layer){
+                    layer.bindPopup(feature.properties.name);            
+                }
+            });    
+        
+        // Enables layer toggle with event listener to "addButton" button element
+        document.getElementById("addButton").addEventListener("click", addCoffeeShops);
+        
+        // Adds coffee shops geojson to map
+        function addCoffeeShops(){
+            coffeeShopPoints.addTo(map)
+        }
+        
+        // Removes coffee shops geojson to map
+        function removeCoffeeShops(){
+            coffeeShopPoints.addTo(map)
+        }        
+            
+        // Add popup to get lat long on any click
+        var popup = L.popup();
+        function onMapClick(e){
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked at: " + e.latlng.toString())
+                .openOn(map);
+        }
+        
+        map.on('click', onMapClick);
+        
 
 	</script>
 </body>
