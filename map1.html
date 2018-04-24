@@ -10,6 +10,8 @@
 	<div id="controls" style="margin: 15px;">
 		Our Buttons Will Go Here
         <button id="addButton">Show Coffee Shops</button>
+        <button id="removeButton">Remove Coffee Shops</button>
+        <button id="toggleButton">Toggle Coffee Shops</button>
 	</div>
 	<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 	<script>
@@ -68,18 +70,33 @@
                 }
             });    
         
-        // Enables layer toggle with event listener to "addButton" button element
-        document.getElementById("addButton").addEventListener("click", addCoffeeShops);
         
         // Adds coffee shops geojson to map
         function addCoffeeShops(){
             coffeeShopPoints.addTo(map)
-        }
+        };
         
-        // Removes coffee shops geojson to map
         function removeCoffeeShops(){
-            coffeeShopPoints.addTo(map)
-        }        
+            map.removeLayer(coffeeShopPoints)
+        };         
+   
+        function toggleLayers(){
+            if (map.hasLayer(coffeeShopPoints)){
+                removeCoffeeShops();
+            } else {
+                addCoffeeShops();
+            }
+        };
+        
+        // Enables layer toggle with event listener to "addButton" button element
+        document.getElementById("addButton").addEventListener("click", addCoffeeShops);
+        
+        // Enables layer toggle with event listener to "addButton" button element
+        document.getElementById("removeButton").addEventListener("click", removeCoffeeShops);
+        
+        // Enables layer toggle with event listener to "toggleButton" button element
+        document.getElementById("toggleButton").addEventListener("click", toggleLayers);        
+                  
             
         // Add popup to get lat long on any click
         var popup = L.popup();
@@ -88,7 +105,7 @@
                 .setLatLng(e.latlng)
                 .setContent("You clicked at: " + e.latlng.toString())
                 .openOn(map);
-        }
+        };
         
         map.on('click', onMapClick);
         
